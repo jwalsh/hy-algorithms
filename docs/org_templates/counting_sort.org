@@ -1,0 +1,96 @@
+#+TITLE: Counting Sort Algorithm
+#+AUTHOR: Your Name
+#+OPTIONS: ^:nil toc:2
+
+* Counting Sort Algorithm
+:PROPERTIES:
+:header-args:hy: :mkdirp t :tangle ../../src/sorting/counting_sort.hy
+:END:
+
+** Overview
+
+Counting Sort is a non-comparison based sorting algorithm that works well when there is a limited range of input values.
+
+** Time and Space Complexity
+
+- Time Complexity: O(n + k) where n is the number of elements and k is the range
+- Space Complexity: O(k) for the counting array
+- In-Place: No
+- Stable: Yes
+
+** Algorithm Steps
+
+1. Find the maximum value in the array
+2. Create a counting array of size max+1 initialized with zeros
+3. Count occurrences of each element in the input array
+4. Update the original array based on the counts
+
+** Implementation
+
+*** Function Definition
+#+BEGIN_SRC hy
+(defn counting-sort [array max-value]
+  "Sort an array of non-negative integers in a single pass using counting sort.
+  
+  Parameters:
+    array: List of non-negative integers to sort
+    max-value: The maximum value in the array
+    
+  Returns:
+    Sorted array (sorted in-place)
+    
+  Time Complexity: O(n+k) where n is array length and k is max-value
+  Space Complexity: O(k)
+  Constraints: Only works for non-negative integers in a known range [0,k]"
+  
+  (let [counts (lfor i (range (+ max-value 1)) 0)]
+    
+    ;; Count occurrences
+    (for [num array]
+      (setv (get counts num) (+ (get counts num) 1)))
+    
+    ;; Overwrite original array with sorted values
+    (let [idx 0]
+      (for [i (range (+ max-value 1))]
+        (while (> (get counts i) 0)
+          (setv (get array idx) i)
+          (setv idx (+ idx 1))
+          (setv (get counts i) (- (get counts i) 1)))))
+    
+    array))
+#+END_SRC
+
+** Visual Representation
+
+#+BEGIN_SRC mermaid :file counting_sort_flow.png
+flowchart TD
+    A[Input Array] --> B[Find Max Value]
+    B --> C[Create Counting Array]
+    C --> D[Count Occurrences]
+    D --> E[Create Sorted Array]
+    E --> F[Return Sorted Array]
+#+END_SRC
+
+** Example Usage
+
+#+BEGIN_SRC hy :tangle no
+(import src.sorting.counting-sort)
+
+(defmain [&rest args]
+  (let [arr [4 2 2 8 3 3 1]]
+    (print "Original array:" arr)
+    (src.sorting.counting-sort.counting-sort arr 8)
+    (print "Sorted array:" arr)))
+#+END_SRC
+
+** When to Use
+
+- When the range of values is small compared to the number of elements
+- When you need a stable sort (preserving the relative order of equal elements)
+- When counting-based frequency analysis is already part of the problem
+
+** Edge Cases and Limitations
+
+- Only works with non-negative integers
+- Requires knowing the maximum value in advance
+- Not efficient when the range of values is large
