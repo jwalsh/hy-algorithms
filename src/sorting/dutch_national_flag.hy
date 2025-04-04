@@ -22,17 +22,16 @@
         high (- (len array) 1)]
     
     (while (<= mid high)
-      (cond [(= (get array mid) 0)
-             (swap array low mid)
-             (setv low (+ low 1))
-             (setv mid (+ mid 1))]
-            
-            [(= (get array mid) 1)
-             (setv mid (+ mid 1))]
-            
-            [True  ; (= (get array mid) 2)
-             (swap array mid high)
-             (setv high (- high 1))]))
+      (if (= (get array mid) 0)
+          (do
+            (swap array low mid)
+            (setv low (+ low 1))
+            (setv mid (+ mid 1)))
+          (if (= (get array mid) 1)
+              (setv mid (+ mid 1))
+              (do  ; (= (get array mid) 2)
+                (swap array mid high)
+                (setv high (- high 1))))))
     
     array))
 
